@@ -99,7 +99,7 @@ def main():
     stock_list = [s.strip().upper() for s in stock_list if s.strip()]
     percentage_range = st.slider("Percentage range from OI strike", 0.1, 5.0, 0.5, step=0.1)
 
-    if st.button("Fetch Option Chain Data"):
+    if st.button("Fetch Open Interest Data"):
         fetcher = StockOptionChainFetcher()
         all_data = []
 
