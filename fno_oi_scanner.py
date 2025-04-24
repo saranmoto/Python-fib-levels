@@ -46,7 +46,7 @@ class StockOptionChainFetcher:
             expiry_dates = json_data['records']['expiryDates']
             close_price = json_data['records']['underlyingValue']
 
-            if not expiry_dates:
+            if not expiry_dates: 
                 return None
 
             nearest_expiry = expiry_dates[0]
