@@ -41,6 +41,7 @@ class StockOptionChainFetcher:
 
         try:
             json_data = response.json()
+            st.text_area(json_data)
             all_data = json_data['records']['data']
             expiry_dates = json_data['records']['expiryDates']
             close_price = json_data['records']['underlyingValue']
