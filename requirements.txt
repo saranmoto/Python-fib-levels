@@ -4,3 +4,4 @@ plotly
 streamlit
 yfinance
 datetime
+requests
