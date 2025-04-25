@@ -5,7 +5,7 @@ on:
     - cron: "00 02 * * 1-5" # Runs at 8:46am 9:16 AM IST (3:46 AM UTC) 
 
 jobs:
-  algo-script:
+  oi-scanner:
     runs-on: ubuntu-latest # Free GitHub-hosted server
     steps:
       - name: Checkout repository

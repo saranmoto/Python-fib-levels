@@ -4,7 +4,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  algo-script:
+  oi-scanner:
     runs-on: ubuntu-latest # Free GitHub-hosted server
     steps:
       - name: Checkout repository
