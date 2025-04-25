@@ -1,4 +1,4 @@
 pandas
 datetime
 requests
-brotli
+streamlit

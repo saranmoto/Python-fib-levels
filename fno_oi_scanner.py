@@ -10,7 +10,7 @@ class StockOptionChainFetcher:
         self.headers: Dict[str, str] = {
             'user-agent': 'Mozilla/5.0',
             'accept-language': 'en,gu;q=0.9,hi;q=0.8',
-            'accept-encoding': 'gzip, deflate, br',
+            # 'accept-encoding': 'gzip, deflate, br',
             'accept': 'application/json, text/plain, */*',
             'referer': 'https://www.nseindia.com/option-chain'
         }
