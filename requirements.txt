@@ -1,7 +1,3 @@
-numpy
 pandas
-plotly
-streamlit
-yfinance
 datetime
 requests
