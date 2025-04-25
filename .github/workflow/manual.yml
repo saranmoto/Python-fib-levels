@@ -1,0 +1,27 @@
+name: Manual Script
+
+on: 
+  workflow_dispatch:
+
+jobs:
+  algo-script:
+    runs-on: ubuntu-latest # Free GitHub-hosted server
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Clones your repo to the server
+        # with:
+        #   ref: master
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12' # Specify your Python version (e.g., 3.9, 3.11)
+      
+      - name: Install dependencies (if any)
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+      - run: echo "Running at $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+
+      - name: Run the Python script
+        run: python nearest_oi_scanner.py
