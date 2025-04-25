@@ -38,6 +38,7 @@ class StockOptionChainFetcher:
         url: str = self.url_stock + stock_symbol
         try:
             response: requests.Response = self.session.get(url, headers=self.headers, timeout=5, cookies=self.cookies)
+            print(f"Response Status Code for {stock_symbol}: {response.status_code}")
             response.raise_for_status()
         except requests.exceptions.RequestException as err:
             print(f"Error fetching data for {stock_symbol}: {err}")
