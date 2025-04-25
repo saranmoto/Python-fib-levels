@@ -1,6 +1,7 @@
 import requests
 import sys
 import pandas
+import brotli
 from typing import Optional, Dict, Any, List
 
 
@@ -45,11 +46,12 @@ class StockOptionChainFetcher:
             return None
 
         try:
-            print(f"Response  {response.content}")
-            print(response.headers.get('Content-Type'))
-            print(response.headers.get('Content-Encoding'))
+            if response.headers.get('Content-Encoding') == 'br':
+                body = brotli.decompress(response.content).decode('utf-8')
+            else:
+                body = response.json()  # already decoded
 
-            json_data: Dict[str, Any] = response.json()
+            json_data: Dict[str, Any] = body
         except ValueError as err:
             print(f"Error parsing JSON for {stock_symbol}: {err}")
             return None
