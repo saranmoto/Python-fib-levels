@@ -46,6 +46,9 @@ class StockOptionChainFetcher:
 
         try:
             print(f"Response  {response.content}")
+            print(response.headers.get('Content-Type'))
+            print(response.headers.get('Content-Encoding'))
+
             json_data: Dict[str, Any] = response.json()
         except ValueError as err:
             print(f"Error parsing JSON for {stock_symbol}: {err}")
