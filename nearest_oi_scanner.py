@@ -45,7 +45,7 @@ class StockOptionChainFetcher:
             return None
 
         try:
-            print(f"Response {response}")
+            print(f"Response  {response.text[:500]}")
             json_data: Dict[str, Any] = response.json()
         except ValueError as err:
             print(f"Error parsing JSON for {stock_symbol}: {err}")
