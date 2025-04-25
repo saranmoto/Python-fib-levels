@@ -1,7 +1,6 @@
 import requests
 import sys
 import pandas
-import brotli
 from typing import Optional, Dict, Any, List
 
 
@@ -13,7 +12,7 @@ class StockOptionChainFetcher:
             'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) '
                           'Chrome/130.0.0.0 Safari/537.36',
             'accept-language': 'en,gu;q=0.9,hi;q=0.8',
-            'accept-encoding': 'gzip, deflate, br',
+            # 'accept-encoding': 'gzip, deflate, br',
             'accept': 'application/json, text/plain, */*',
             'referer': 'https://www.nseindia.com/option-chain'
         }
@@ -39,19 +38,14 @@ class StockOptionChainFetcher:
         url: str = self.url_stock + stock_symbol
         try:
             response: requests.Response = self.session.get(url, headers=self.headers, timeout=5, cookies=self.cookies)
-            print(f"Response Status Code for {stock_symbol}: {response.status_code}")
+            # print(f"Response Status Code for {stock_symbol}: {response.status_code}")
             response.raise_for_status()
         except requests.exceptions.RequestException as err:
             print(f"Error fetching data for {stock_symbol}: {err}")
             return None
 
         try:
-            if response.headers.get('Content-Encoding') == 'br':
-                body = brotli.decompress(response.content).decode('utf-8')
-            else:
-                body = response.json()  # already decoded
-
-            json_data: Dict[str, Any] = body
+            json_data: Dict[str, Any] = response.json()
         except ValueError as err:
             print(f"Error parsing JSON for {stock_symbol}: {err}")
             return None
@@ -142,30 +136,29 @@ class StockOptionChainFetcher:
 
 if __name__ == '__main__':
     stock_list = [
-        'ABB'
-        # , 'ACC', 'APLAPOLLO', 'AUBANK', 'AARTIIND', 'ADANIENSOL', 'ADANIENT', 'ADANIGREEN', 'ADANIPORTS', 'ATGL',
-        # 'ABCAPITAL', 'ABFRL', 'ALKEM', 'AMBUJACEM', 'ANGELONE', 'APOLLOHOSP', 'APOLLOTYRE', 'ASHOKLEY', 'ASIANPAINT',
-        # 'ASTRAL', 'AUROPHARMA', 'DMART', 'AXISBANK', 'BSOFT', 'BSE', 'BAJAJ-AUTO', 'BAJFINANCE', 'BAJAJFINSV',
-        # 'BALKRISIND', 'BANDHANBNK', 'BANKBARODA', 'BANKINDIA', 'BEL', 'BHARATFORG', 'BHEL', 'BPCL',
-        # 'BHARTIARTL', 'BIOCON', 'BOSCHLTD', 'BRITANNIA', 'CESC', 'CGPOWER', 'CANBK', 'CDSL', 'CHAMBLFERT', 'CHOLAFIN',
-        # 'CIPLA', 'COALINDIA', 'COFORGE', 'COLPAL', 'CAMS', 'CONCOR', 'CROMPTON', 'CUMMINSIND', 'CYIENT', 'DLF',
-        # 'DABUR', 'DALBHARAT', 'DEEPAKNTR', 'DELHIVERY', 'DIVISLAB', 'DIXON', 'DRREDDY', 'ETERNAL', 'EICHERMOT',
-        # 'ESCORTS', 'EXIDEIND', 'NYKAA', 'GAIL', 'GMRAIRPORT', 'GLENMARK', 'GODREJCP', 'GODREJPROP', 'GRANULES',
-        # 'GRASIM', 'HCLTECH', 'HDFCAMC', 'HDFCBANK', 'HDFCLIFE', 'HFCL', 'HAVELLS', 'HEROMOTOCO', 'HINDALCO', 'HAL',
-        # 'HINDCOPPER', 'HINDPETRO', 'HINDUNILVR', 'HINDZINC', 'HUDCO', 'ICICIBANK', 'ICICIGI', 'ICICIPRULI',
-        # 'IDFCFIRSTB', 'IIFL', 'IRB', 'ITC', 'INDIANB', 'IEX', 'IOC', 'IRCTC', 'IRFC', 'IREDA', 'IGL', 'INDUSTOWER',
-        # 'INDUSINDBK', 'NAUKRI', 'INFY', 'INOXWIND', 'INDIGO', 'JSWENERGY', 'JSWSTEEL', 'JSL', 'JINDALSTEL', 'JIOFIN',
-        # 'JUBLFOOD', 'KEI', 'KPITTECH', 'KALYANKJIL', 'KOTAKBANK', 'LTF', 'LICHSGFIN', 'LTIM', 'LT', 'LAURUSLABS',
-        # 'LICI', 'LUPIN', 'MRF', 'LODHA', 'MGL', 'M%26MFIN', 'M%26M', 'MANAPPURAM', 'MARICO', 'MARUTI', 'MFSL',
-        # 'MAXHEALTH', 'MPHASIS', 'MCX', 'MUTHOOTFIN', 'NBCC', 'NCC', 'NHPC', 'NMDC', 'NTPC', 'NATIONALUM',
-        # 'NESTLEIND', 'OBEROIRLTY', 'ONGC', 'OIL', 'PAYTM', 'OFSS', 'POLICYBZR', 'PIIND', 'PNBHOUSING', 'PAGEIND',
-        # 'PATANJALI', 'PERSISTENT', 'PETRONET', 'PIDILITIND', 'PEL', 'POLYCAB', 'POONAWALLA', 'PFC', 'POWERGRID',
-        # 'PRESTIGE', 'PNB', 'RBLBANK', 'RECLTD', 'RELIANCE', 'SBICARD', 'SBILIFE', 'SHREECEM', 'SJVN', 'SRF',
-        # 'MOTHERSON', 'SHRIRAMFIN', 'SIEMENS', 'SOLARINDS', 'SONACOMS', 'SBIN', 'SAIL', 'SUNPHARMA', 'SUPREMEIND',
-        # 'SYNGENE', 'TATACONSUM', 'TITAGARH', 'TVSMOTOR', 'TATACHEM', 'TATACOMM', 'TCS', 'TATAELXSI', 'TATAMOTORS',
-        # 'TATAPOWER', 'TATASTEEL', 'TATATECH', 'TECHM', 'FEDERALBNK', 'INDHOTEL', 'PHOENIXLTD', 'RAMCOCEM', 'TITAN',
-        # 'TORNTPHARM', 'TORNTPOWER', 'TRENT', 'TIINDIA', 'UPL', 'ULTRACEMCO', 'UNIONBANK', 'UNITDSPR', 'VBL',
-        # 'VEDL', 'IDEA', 'VOLTAS', 'WIPRO', 'YESBANK', 'ZYDUSLIFE'
+        'ABB', 'ACC', 'APLAPOLLO', 'AUBANK', 'AARTIIND', 'ADANIENSOL', 'ADANIENT', 'ADANIGREEN', 'ADANIPORTS', 'ATGL',
+        'ABCAPITAL', 'ABFRL', 'ALKEM', 'AMBUJACEM', 'ANGELONE', 'APOLLOHOSP', 'APOLLOTYRE', 'ASHOKLEY', 'ASIANPAINT',
+        'ASTRAL', 'AUROPHARMA', 'DMART', 'AXISBANK', 'BSOFT', 'BSE', 'BAJAJ-AUTO', 'BAJFINANCE', 'BAJAJFINSV',
+        'BALKRISIND', 'BANDHANBNK', 'BANKBARODA', 'BANKINDIA', 'BEL', 'BHARATFORG', 'BHEL', 'BPCL',
+        'BHARTIARTL', 'BIOCON', 'BOSCHLTD', 'BRITANNIA', 'CESC', 'CGPOWER', 'CANBK', 'CDSL', 'CHAMBLFERT', 'CHOLAFIN',
+        'CIPLA', 'COALINDIA', 'COFORGE', 'COLPAL', 'CAMS', 'CONCOR', 'CROMPTON', 'CUMMINSIND', 'CYIENT', 'DLF',
+        'DABUR', 'DALBHARAT', 'DEEPAKNTR', 'DELHIVERY', 'DIVISLAB', 'DIXON', 'DRREDDY', 'ETERNAL', 'EICHERMOT',
+        'ESCORTS', 'EXIDEIND', 'NYKAA', 'GAIL', 'GMRAIRPORT', 'GLENMARK', 'GODREJCP', 'GODREJPROP', 'GRANULES',
+        'GRASIM', 'HCLTECH', 'HDFCAMC', 'HDFCBANK', 'HDFCLIFE', 'HFCL', 'HAVELLS', 'HEROMOTOCO', 'HINDALCO', 'HAL',
+        'HINDCOPPER', 'HINDPETRO', 'HINDUNILVR', 'HINDZINC', 'HUDCO', 'ICICIBANK', 'ICICIGI', 'ICICIPRULI',
+        'IDFCFIRSTB', 'IIFL', 'IRB', 'ITC', 'INDIANB', 'IEX', 'IOC', 'IRCTC', 'IRFC', 'IREDA', 'IGL', 'INDUSTOWER',
+        'INDUSINDBK', 'NAUKRI', 'INFY', 'INOXWIND', 'INDIGO', 'JSWENERGY', 'JSWSTEEL', 'JSL', 'JINDALSTEL', 'JIOFIN',
+        'JUBLFOOD', 'KEI', 'KPITTECH', 'KALYANKJIL', 'KOTAKBANK', 'LTF', 'LICHSGFIN', 'LTIM', 'LT', 'LAURUSLABS',
+        'LICI', 'LUPIN', 'MRF', 'LODHA', 'MGL', 'M%26MFIN', 'M%26M', 'MANAPPURAM', 'MARICO', 'MARUTI', 'MFSL',
+        'MAXHEALTH', 'MPHASIS', 'MCX', 'MUTHOOTFIN', 'NBCC', 'NCC', 'NHPC', 'NMDC', 'NTPC', 'NATIONALUM',
+        'NESTLEIND', 'OBEROIRLTY', 'ONGC', 'OIL', 'PAYTM', 'OFSS', 'POLICYBZR', 'PIIND', 'PNBHOUSING', 'PAGEIND',
+        'PATANJALI', 'PERSISTENT', 'PETRONET', 'PIDILITIND', 'PEL', 'POLYCAB', 'POONAWALLA', 'PFC', 'POWERGRID',
+        'PRESTIGE', 'PNB', 'RBLBANK', 'RECLTD', 'RELIANCE', 'SBICARD', 'SBILIFE', 'SHREECEM', 'SJVN', 'SRF',
+        'MOTHERSON', 'SHRIRAMFIN', 'SIEMENS', 'SOLARINDS', 'SONACOMS', 'SBIN', 'SAIL', 'SUNPHARMA', 'SUPREMEIND',
+        'SYNGENE', 'TATACONSUM', 'TITAGARH', 'TVSMOTOR', 'TATACHEM', 'TATACOMM', 'TCS', 'TATAELXSI', 'TATAMOTORS',
+        'TATAPOWER', 'TATASTEEL', 'TATATECH', 'TECHM', 'FEDERALBNK', 'INDHOTEL', 'PHOENIXLTD', 'RAMCOCEM', 'TITAN',
+        'TORNTPHARM', 'TORNTPOWER', 'TRENT', 'TIINDIA', 'UPL', 'ULTRACEMCO', 'UNIONBANK', 'UNITDSPR', 'VBL',
+        'VEDL', 'IDEA', 'VOLTAS', 'WIPRO', 'YESBANK', 'ZYDUSLIFE'
         ]
     
     StockOptionChainFetcher.create_instance_for_list(stock_list)
