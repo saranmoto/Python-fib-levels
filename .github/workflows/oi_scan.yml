@@ -1,8 +1,8 @@
 name: Cron Script
 
 on: 
-  schedule: # Optional: Runs on a schedule (e.g., daily at 12:00 UTC)
-    - cron: "00 01 * * 1-5" # Runs at 8:46am 9:16 AM IST (3:46 AM UTC) 
+ schedule: # Optional: Runs on a schedule (e.g., daily at 12:00 UTC)
+   #- cron: "00 01 * * 1-5" # Runs at 8:46am 9:16 AM IST (3:46 AM UTC) 
 
 jobs:
   oi-scanner:
